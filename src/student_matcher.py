@@ -71,17 +71,19 @@ def compute_optimal_pairs(distance_matrix: pd.DataFrame, local_students: pd.Data
                     distance_matrix_filtered.columns[column])
     return matching_matrix
 
-def generate_matching_table(matching_matrix: pd.DataFrame, local_students: pd.DataFrame, incoming_students: pd.DataFrame) -> pd.DataFrame:
+def generate_matching_table(distance_matrix: pd.DataFrame,matching_matrix: pd.DataFrame, local_students: pd.DataFrame, incoming_students: pd.DataFrame) -> pd.DataFrame:
     """
     Generates a table of matched students with their contact details.
 
     For every match (cell value = 1) in the matching_matrix, this function
     retrieves the corresponding local and incoming student details and creates
     a row with:
-        - Local Student: firstName + " " + lastName
+        - Local firstName
+        - Local lastName
         - Local Email
         - Local Phone
-        - Incoming Student: firstName + " " + lastName
+        - Incoming firstName
+        - Incoming lastName
         - Incoming Email
         - Incoming Phone
 
@@ -106,20 +108,20 @@ def generate_matching_table(matching_matrix: pd.DataFrame, local_students: pd.Da
                 local: pd.Series = local_students.loc[local_idx]
                 incoming: pd.Series = incoming_students.loc[incoming_idx]
 
-                # Create full names by combining first and last names.
-                local_name: str = f"{local['firstName']} {local['lastName']}"
-                incoming_name: str = f"{incoming['firstName']} {incoming['lastName']}"
 
                 # Build a dictionary for the matching row.
                 matching_rows.append({
-                    "Local Name": local_name,
+                    "Local FirstName": local.get("firstName", ""),
+                    "Local LastName": local.get("lastName", ""),
                     "Local Email": local.get("email", ""),
-                    "local Age" : local.get("age", ""),
                     "Local Phone": local.get("phone", ""),
-                    "Incoming Name": incoming_name,
-                    "Incoming Age" : incoming.get("age", ""),
+                    "local Age" : local.get("age", ""),
+                    "Incoming Name": incoming.get("firstName", ""),
+                    "Incoming LastName": incoming.get("lastName", ""),
                     "Incoming Email": incoming.get("email", ""),
-                    "Incoming Phone": incoming.get("phone", "")
+                    "Incoming Phone": incoming.get("phone", ""),
+                    "Incoming Age" : incoming.get("age", ""),
+                    "Score" : distance_matrix.loc[local_idx, incoming_idx]
                 })
 
     # Convert the list of matching rows to a DataFrame.

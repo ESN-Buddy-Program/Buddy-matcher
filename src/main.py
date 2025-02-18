@@ -79,7 +79,7 @@ def main():
         distance_matrix, local_students, incoming_students, base_local_capacity, base_incoming_necessity)
     print(matches_matrix)
 
-    matches_table = student_matcher.generate_matching_table(
+    matches_table = student_matcher.generate_matching_table(distance_matrix,
         matches_matrix, local_students, incoming_students)
     print(matches_table)
 
